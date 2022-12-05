@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="decreament">-1</button>
+    <span id="show">0</span>
+    <button id="increament">+1</button>
+    <script src="./myRedux.js"></script>
+    <script>
+    //console.log(store)
+    function reducer(state,action){
+        switch(action.type){
+            case "decreament":
+            return state -1
+            case "increament":
+            return state + 1
+            default:
+            return state
+        }
+    }
+   const store = createStore(reducer,0)
+    store.subscribe(function(){
+        console.log(store.getState())
+        document.getElementById('show').innerText = store.getState()
+    })
+    document.getElementById('decreament').onclick = function(){
+        store.dispatch({type:'decreament'})
+    }
+    document.getElementById('increament').onclick = function(){
+        store.dispatch({type:'increament'})
+    }
+    </script>
+</body>
+</html>
