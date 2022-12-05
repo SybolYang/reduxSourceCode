@@ -25,7 +25,6 @@
     }
    const store = createStore(reducer,0)
     store.subscribe(function(){
-        console.log(store.getState())
         document.getElementById('show').innerText = store.getState()
     })
     document.getElementById('decreament').onclick = function(){
