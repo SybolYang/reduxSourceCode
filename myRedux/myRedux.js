@@ -13,6 +13,8 @@
 }
 */
 function createStore(reducer, preLoadedState) {
+  //约束reducer参数类型
+  if (typeof reducer !== 'function') throw new Error('reducer参数必须为函数')
   //获取预存储状态
   var currentState = preLoadedState
   //存储subscribe数组队列
@@ -23,6 +25,10 @@ function createStore(reducer, preLoadedState) {
   }
   //触发action
   function dispatch(action) {
+    //判断action是否是对象
+    if (isPlainObject(action) === false) throw new Error('action必须为对象')
+    //判断action中是否有type字段
+    if (action.type === undefined) throw new Error('action对象必须有type字段')
     currentState = reducer(currentState, action) //获取reducer处理后的状态
     for (var i = 0; i < currentListeners.length; i++) {
       //获取订阅者
@@ -40,4 +46,14 @@ function createStore(reducer, preLoadedState) {
     dispatch,
     subscribe,
   }
+}
+//判断object是否是对象
+function isPlainObject(object) {
+  //基本数据类型&&null排除在外
+  if (typeof object !== 'object' || object === null) return false
+  //区分数组和对象
+  if (Object.prototype.toString.call(object) === '[object Object]') {
+    return true
+  }
+  return false
 }
