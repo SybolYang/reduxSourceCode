@@ -12,6 +12,27 @@
     <button id="increament">+1</button>
     <script src="./myRedux.js"></script>
     <script>
+
+    function enhancer(createStore) {
+    return function (reducer, preLoadedState) {
+        var store = createStore(reducer, preLoadedState)//调用createStore之后才可以对数据进行修改
+        var dispatch = store.dispatch
+        function _dispatch(action) {
+            if (typeof action === 'function') {
+                return action(dispatch)
+            }else if(Object.prototype.toString.call(action) === '[object Object]'){
+                return dispatch(action)
+            }
+             console.log(dispatch,action,'1111')
+            // dispatch(dispatch)
+        }
+            return {
+            ...store,
+            dispatch: _dispatch,
+            }
+        }
+    }
+
     function reducer(state,action){
         switch(action.type){
             case "decreament":
@@ -22,7 +43,7 @@
             return state
         }
     }
-   const store = createStore(reducer,0)
+   const store = createStore(reducer,0,enhancer)
     store.subscribe(function(){
         document.getElementById('show').innerText = store.getState()
     })
@@ -30,7 +51,12 @@
         store.dispatch({type:'decreament'})
     }
     document.getElementById('increament').onclick = function(){
-        store.dispatch({type:'increament'})
+       // store.dispatch({type:'increament'})
+       store.dispatch(function(dispatch){
+        setTimeout(function(){
+            dispatch({type:'increament'})
+        },2000)
+       })
     }
     </script>
 </body>

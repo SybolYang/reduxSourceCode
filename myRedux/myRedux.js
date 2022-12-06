@@ -3,7 +3,7 @@
 1.createStore接收三个参数
 第一个：reducer函数，用于根据action处理逻辑并返回最新状态state
 第二个：preLoadedState,预存储状态state
-第三个：enhancer，对store功能进行增加
+第三个：enhancer，对store功能进行增加,必须由createStore的调用者传入
 
 2.createStored返回三个参数
 { 
@@ -12,9 +12,17 @@
     subscribe //订阅状态,多个地方可被调用
 }
 */
-function createStore(reducer, preLoadedState) {
+
+function createStore(reducer, preLoadedState, enhancer) {
   //约束reducer参数类型
   if (typeof reducer !== 'function') throw new Error('reducer参数必须为函数')
+  //判断enhancer参数有无传递
+  if (typeof enhancer !== 'undefined') {
+    if (typeof enhancer !== 'function') {
+      throw new Error('enhancer必须是函数')
+    }
+    return enhancer(createStore)(reducer, preLoadedState)
+  }
   //获取预存储状态
   var currentState = preLoadedState
   //存储subscribe数组队列
