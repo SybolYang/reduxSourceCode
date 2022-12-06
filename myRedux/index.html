@@ -11,8 +11,10 @@
     <span id="show">0</span>
     <button id="increament">+1</button>
     <script src="./myRedux.js"></script>
-    <script>
+    <script src="./middlewares/logger.js"></script>
+    <script src="./middlewares/thunk.js"></script>
 
+    <script>
     function enhancer(createStore) {
     return function (reducer, preLoadedState) {
         var store = createStore(reducer, preLoadedState)//调用createStore之后才可以对数据进行修改
@@ -43,7 +45,8 @@
             return state
         }
     }
-   const store = createStore(reducer,0,enhancer)
+    console.log(logger,thunk)
+   const store = createStore(reducer,0,applyMiddleware(logger,thunk))//enhancer
     store.subscribe(function(){
         document.getElementById('show').innerText = store.getState()
     })
@@ -51,12 +54,12 @@
         store.dispatch({type:'decreament'})
     }
     document.getElementById('increament').onclick = function(){
-       // store.dispatch({type:'increament'})
-       store.dispatch(function(dispatch){
-        setTimeout(function(){
-            dispatch({type:'increament'})
-        },2000)
-       })
+        store.dispatch({type:'increament'})
+    //    store.dispatch(function(dispatch){
+    //     setTimeout(function(){
+    //         dispatch({type:'increament'})
+    //     },2000)
+    //    })
     }
     </script>
 </body>

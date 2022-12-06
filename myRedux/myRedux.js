@@ -4,6 +4,7 @@
 第一个：reducer函数，用于根据action处理逻辑并返回最新状态state
 第二个：preLoadedState,预存储状态state
 第三个：enhancer，对store功能进行增加,必须由createStore的调用者传入
+        applyMiddleware,中间件，目的是为了增强dispatch能力
 
 2.createStored返回三个参数
 { 
@@ -64,4 +65,37 @@ function isPlainObject(object) {
     return true
   }
   return false
+}
+
+//
+function applyMiddleware(...middlewares) {
+  return function (createStore) {
+    return function (reducer, preLoadedState) {
+      //创建store
+      var store = createStore(reducer, preLoadedState)
+      //简易版store
+      var middlewareAPI = {
+        getState: store.getState,
+        dispatch: store.dispatch,
+      }
+      //调用中间件的第一层函数
+      var chain = middlewares.map((middleware) => middleware(middlewareAPI))
+      var dispatch = compose(...chain)(store.dispatch)
+      return {
+        ...store,
+        dispatch,
+      }
+    }
+  }
+}
+
+function compose() {
+  var funcs = [...arguments]
+  console.log(funcs)
+  return function (dispatch) {
+    for (var i = funcs.length - 1; i >= 0; i--) {
+      dispatch = funcs[i](dispatch)
+    }
+    return dispatch
+  }
 }
