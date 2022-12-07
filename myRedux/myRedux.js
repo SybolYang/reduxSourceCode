@@ -14,6 +14,7 @@
 }
 */
 
+//创建store
 function createStore(reducer, preLoadedState, enhancer) {
   //约束reducer参数类型
   if (typeof reducer !== 'function') throw new Error('reducer参数必须为函数')
@@ -101,6 +102,7 @@ function compose() {
   }
 }
 
+//实现bindActionCreators
 function bindActionCreators(actionCreators, dispatch) {
   var boundActionsCreators = {}
   for (const i in actionCreators) {
@@ -109,4 +111,25 @@ function bindActionCreators(actionCreators, dispatch) {
     }
   }
   return boundActionsCreators
+}
+
+//实现combineReducers,把处理逻辑的单个reducer函数在第一个参数的位置传入，判断是否为函数，第二个参数传入state, action，期待得到新的state
+function combineReducers(reducers) {
+  var reducerKeys = Object.keys(reducers)
+  for (let i = 0; i < reducerKeys.length; i++) {
+    // console.log(reducerKeys, key, reducers[key])
+    const key = reducerKeys[i]
+    if (typeof reducers[key] !== 'function')
+      throw new Error('reducer必须是一个函数')
+  }
+  return function (state, action) {
+    const nextState = {}
+    for (let i = 0; i < reducerKeys.length; i++) {
+      const key = reducerKeys[i]
+      const reducer = reducers[key]
+      const previousStateForKey = state[key]
+      nextState[key] = reducer(previousStateForKey, action)
+    }
+    return nextState
+  }
 }

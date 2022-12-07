@@ -15,6 +15,7 @@
     <script src="./middlewares/thunk.js"></script>
 
     <script>
+
     // function enhancer(createStore) {
     // return function (reducer, preLoadedState) {
     //     var store = createStore(reducer, preLoadedState)//调用createStore之后才可以对数据进行修改
@@ -36,7 +37,7 @@
     //     }
     // }
 
-    function reducer(state,action){
+    function countReducer(state,action){
         switch(action.type){
             case "decreament":
             return state -1
@@ -46,7 +47,10 @@
             return state
         }
     }
-   const store = createStore(reducer,0,applyMiddleware(logger,thunk))//enhancer
+    //实现combineReducers
+    var  rootReducer = combineReducers({ counter: countReducer})
+    console.log(rootReducer)
+   const store = createStore(rootReducer,{counter:0},applyMiddleware(logger,thunk))//enhancer
    //实现bindActionCreators
    var actions = bindActionCreators({decreament,increament},store.dispatch)
    function decreament(){
@@ -56,13 +60,12 @@
     return {type:'increament'}
    }
     store.subscribe(function(){
-        document.getElementById('show').innerText = store.getState()
+        document.getElementById('show').innerText = store.getState().counter
     })
     // console.log(actions)
     document.getElementById('decreament').onclick = function(){
        // store.dispatch({type:'decreament'})
        actions.decreament()
-        
     }
     document.getElementById('increament').onclick = function(){
         //store.dispatch({type:'increament'})
