@@ -15,25 +15,26 @@
     <script src="./middlewares/thunk.js"></script>
 
     <script>
-    function enhancer(createStore) {
-    return function (reducer, preLoadedState) {
-        var store = createStore(reducer, preLoadedState)//调用createStore之后才可以对数据进行修改
-        var dispatch = store.dispatch
-        function _dispatch(action) {
-            if (typeof action === 'function') {
-                return action(dispatch)
-            }else if(Object.prototype.toString.call(action) === '[object Object]'){
-                return dispatch(action)
-            }
-             console.log(dispatch,action,'1111')
-            // dispatch(dispatch)
-        }
-            return {
-            ...store,
-            dispatch: _dispatch,
-            }
-        }
-    }
+    // function enhancer(createStore) {
+    // return function (reducer, preLoadedState) {
+    //     var store = createStore(reducer, preLoadedState)//调用createStore之后才可以对数据进行修改
+    //     var dispatch = store.dispatch
+    //     function _dispatch(action) {
+    //         if (typeof action === 'function') {
+    //             console.log('kkkk',action)
+    //             return action(dispatch)
+    //         }else if(Object.prototype.toString.call(action) === '[object Object]'){
+    //             return dispatch(action)
+    //         }
+    //          console.log(dispatch,action,'1111')
+    //         // dispatch(dispatch)
+    //     }
+    //         return {
+    //         ...store,
+    //         dispatch: _dispatch,
+    //         }
+    //     }
+    // }
 
     function reducer(state,action){
         switch(action.type){
@@ -45,21 +46,32 @@
             return state
         }
     }
-    console.log(logger,thunk)
    const store = createStore(reducer,0,applyMiddleware(logger,thunk))//enhancer
+   //实现bindActionCreators
+   var actions = bindActionCreators({decreament,increament},store.dispatch)
+   function decreament(){
+    return {type:'decreament'}
+   }
+    function increament(){
+    return {type:'increament'}
+   }
     store.subscribe(function(){
         document.getElementById('show').innerText = store.getState()
     })
+    // console.log(actions)
     document.getElementById('decreament').onclick = function(){
-        store.dispatch({type:'decreament'})
+       // store.dispatch({type:'decreament'})
+       actions.decreament()
+        
     }
     document.getElementById('increament').onclick = function(){
-        store.dispatch({type:'increament'})
+        //store.dispatch({type:'increament'})
     //    store.dispatch(function(dispatch){
     //     setTimeout(function(){
     //         dispatch({type:'increament'})
     //     },2000)
     //    })
+    actions.increament()
     }
     </script>
 </body>

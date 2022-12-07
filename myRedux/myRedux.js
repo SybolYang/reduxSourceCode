@@ -35,6 +35,7 @@ function createStore(reducer, preLoadedState, enhancer) {
   //触发action
   function dispatch(action) {
     //判断action是否是对象
+    //console.log(action)
     if (isPlainObject(action) === false) throw new Error('action必须为对象')
     //判断action中是否有type字段
     if (action.type === undefined) throw new Error('action对象必须有type字段')
@@ -67,7 +68,7 @@ function isPlainObject(object) {
   return false
 }
 
-//
+//实现中间件
 function applyMiddleware(...middlewares) {
   return function (createStore) {
     return function (reducer, preLoadedState) {
@@ -98,4 +99,14 @@ function compose() {
     }
     return dispatch
   }
+}
+
+function bindActionCreators(actionCreators, dispatch) {
+  var boundActionsCreators = {}
+  for (const i in actionCreators) {
+    boundActionsCreators[i] = function () {
+      dispatch(actionCreators[i]())
+    }
+  }
+  return boundActionsCreators
 }
